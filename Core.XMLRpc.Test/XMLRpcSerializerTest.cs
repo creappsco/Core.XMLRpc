@@ -287,5 +287,46 @@ namespace Core.XMLRpc.Test
             //Assert
             Assert.True(returnedDetauls.Count == 12);
         }
+
+        [Fact]
+        public void Can_DeSerialize_StructSimple()
+        {
+            //Arrange
+            string xmlData = "<struct><member><name>lowerBound</name><value><int>18</int></value></member><member><name>upperBound</name><value><int>139</int></value></member></struct>";
+            //Act
+            var data = XMLRpcSerializer.DeserializeStruct<DataXML>(xmlData);
+            //Assert
+            Assert.IsType<DataXML>(data);
+            Assert.Equal(18, data.LowerBound);
+            Assert.Equal(139, data.UpperBound);
+        }
+
+        [Fact]
+        public void Can_DeSerialize_StructComplex()
+        {
+            //Arrange
+            string xmlData = @"<struct><member><name>display_name</name><value><string>100</string></value></member><member><name>__last_update</name><value><string>2019-04-30 21:12:23</string></value></member><member><name>codigo_requerimiento</name><value><int>100</int></value></member><member><name>active</name><value><boolean>1</boolean></value></member><member><name>id</name><value><int>1545</int></value></member><member><name>tipo_solicitud</name><value><int>1</int></value></member></struct>";
+            //Act
+            var data = XMLRpcSerializer.DeserializeStruct<DataXML2>(xmlData);
+            //Assert
+            Assert.IsType<DataXML2>(data);
+            Assert.Equal(100, data.CodigoRequerimiento);
+        }
+    }
+
+    public class DataXML
+    {
+        public int UpperBound { get; set; }
+        public int LowerBound { get; set; }
+    }
+
+    public class DataXML2
+    {
+       public bool Active { get; set; }
+        public int CodigoRequerimiento { get; set; }
+        public string DisplayName { get; set; }
+        public int Id { get; set; }
+        public DateTime LastUpdate { get; set; }
+        public int TipoSolicitud { get; set; }
     }
 }

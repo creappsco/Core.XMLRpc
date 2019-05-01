@@ -1,4 +1,5 @@
 ﻿using Core.XMLRpc.Commons;
+using Core.XMLRpc.Serializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,6 +65,7 @@ namespace Core.XMLRpc
                                     break;
                                 case XMLRpcType.Struct:
                                     throw new NotImplementedException("");
+                                //this.Value = XMLRpcSerializer.DeserializeStruct<T>("");
                                 default:
                                     break;
                             }
