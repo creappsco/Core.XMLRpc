@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Serialization;
 using Xunit;
 
@@ -293,8 +294,20 @@ namespace Core.XMLRpc.Test
         {
             //Arrange
             string xmlData = "<struct><member><name>lowerBound</name><value><int>18</int></value></member><member><name>upperBound</name><value><int>139</int></value></member></struct>";
+            var settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                IgnoreWhitespace = true
+            };
+            byte[] byteArray = Encoding.ASCII.GetBytes(xmlData);
+            MemoryStream stream = new MemoryStream(byteArray)
+            {
+                Position = 0
+            };
+            XmlReader reader = XmlReader.Create(stream, settings);
             //Act
-            var data = XMLRpcSerializer.DeserializeStruct<DataXML>(xmlData);
+            var data = XMLRpcSerializer.DeserializeStruct<DataXML>(reader);
             //Assert
             Assert.IsType<DataXML>(data);
             Assert.Equal(18, data.LowerBound);
@@ -306,8 +319,20 @@ namespace Core.XMLRpc.Test
         {
             //Arrange
             string xmlData = @"<struct><member><name>display_name</name><value><string>100</string></value></member><member><name>__last_update</name><value><string>2019-04-30 21:12:23</string></value></member><member><name>codigo_requerimiento</name><value><int>100</int></value></member><member><name>active</name><value><boolean>1</boolean></value></member><member><name>id</name><value><int>1545</int></value></member><member><name>tipo_solicitud</name><value><int>1</int></value></member></struct>";
+            var settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                IgnoreWhitespace = true
+            };
+            byte[] byteArray = Encoding.ASCII.GetBytes(xmlData);
+            MemoryStream stream = new MemoryStream(byteArray)
+            {
+                Position = 0
+            };
+            XmlReader reader = XmlReader.Create(stream, settings);
             //Act
-            var data = XMLRpcSerializer.DeserializeStruct<DataXML2>(xmlData);
+            var data = XMLRpcSerializer.DeserializeStruct<DataXML2>(reader);
             //Assert
             Assert.IsType<DataXML2>(data);
             Assert.Equal(100, data.CodigoRequerimiento);

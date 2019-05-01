@@ -1,5 +1,6 @@
-﻿using Core.XMLRpc.App;
-using Core.XMLRpc.Commons;
+﻿using Core.XMLRpc.Commons;
+using Core.XMLRpc.Exceptions;
+using Core.XMLRpc.Test.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,12 +18,10 @@ namespace Core.XMLRpc.Test
             //Arrange            
             XMLRpcClient caller = new XMLRpcClient("http://webservices.enerca.com.co:8069", "admin", "admin", "enerca");
             //Act
-            var returned = await caller.Login();
+            var returned = await caller.Login<int>();
             //Assert
-            Assert.IsType<XMLRpcResponse>(returned);
-            Assert.True(returned.Response.Length == 1);
-            Assert.Equal("1", returned.Response[0].Value);
-            Assert.Equal("int", StringEnum.GetStringValue(returned.Response[0].DataType));
+            Assert.IsType<int>(returned);
+            Assert.Equal(1, returned);
         }
 
         [Fact]
@@ -31,12 +30,8 @@ namespace Core.XMLRpc.Test
             //Arrange            
             XMLRpcClient caller = new XMLRpcClient("http://webservices.enerca.com.co:8069", "admin", "admin2", "enerca");
             //Act
-            var returned = await caller.Login();
-            //Assert
-            Assert.IsType<XMLRpcResponse>(returned);
-            Assert.True(returned.Response.Length == 1);
-            Assert.Equal("0", returned.Response[0].Value);
-            Assert.Equal("boolean", StringEnum.GetStringValue(returned.Response[0].DataType));
+            //Assert 
+            await Assert.ThrowsAsync<XMLRpcInvalidCredentiasException>(() => caller.Login<int>());
         }
 
         [Fact]
@@ -65,11 +60,43 @@ namespace Core.XMLRpc.Test
                 }
             };
             //Act
-            var returned = await caller.Send("search", "siec.factura", parameters);
-            Assert.IsType<XMLRpcResponse>(returned);
-            var returnedDetauls = Assert.IsType<List<XMLRpcResponseDetails>>(returned.Response[0].Value);
+            var returned = await caller.Send<List<int>>("search", "siec.factura", parameters);
+            Assert.IsType<List<int>>(returned);
             //Assert
-            Assert.True(returnedDetauls.Count == 12);
+            Assert.True(returned.Count == 12);
+        }
+
+        [Fact]
+        public async void Can_Call_SearchRead()
+        {
+            //Arrange            
+            XMLRpcClient caller = new XMLRpcClient("http://webservices.enerca.com.co:8069", "admin", "admin", "enerca");
+            var parameters = new XMLRpcParameter<XMLRpcParamList<IXMLRpcParameter>>
+            {
+                Name = "Params",
+                FilterOption = FilterOption.None,
+                Value = new XMLRpcParamList<IXMLRpcParameter>
+                {
+                    new XMLRpcParameter<string>
+                    {
+                        Name="cuenta",
+                        FilterOption = FilterOption.Equals,
+                        Value="112093"
+                    },
+                    new XMLRpcParameter<string>
+                    {
+                        Name="ano",
+                        FilterOption = FilterOption.Equals,
+                        Value="2010"
+                    }
+                }
+            };
+            //Act
+            var returned = await caller.Send<List<Factura>>("search_read", "siec.factura", parameters);
+            Assert.IsType<List<Factura>>(returned);
+            //Assert
+            Assert.True(returned.Count == 12);
+            Assert.Equal("504130", returned[0].ValorOriginal);
         }
     }
 }

@@ -9,7 +9,6 @@ using System.Xml.Serialization;
 
 namespace Core.XMLRpc
 {
-
     [XmlRoot("methodResponse")]
     public class XMLRpcResponse
     {

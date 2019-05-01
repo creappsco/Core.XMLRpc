@@ -1,4 +1,5 @@
-﻿using Core.XMLRpc.Serializer;
+﻿using Core.XMLRpc.Exceptions;
+using Core.XMLRpc.Serializer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -52,10 +53,9 @@ namespace Core.XMLRpc
                 }
             };
         }
-        public async Task<XMLRpcResponse> Login()
+        public async Task<T> Login<T>()
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(XMLRpcResponse));
-            var rpcResponse = new XMLRpcResponse();
+            var rpcResponse = new object();
 
             using (var client = new HttpClient())
             {
@@ -71,19 +71,35 @@ namespace Core.XMLRpc
                 HttpResponseMessage result = await client.SendAsync(request);
                 if (result.IsSuccessStatusCode)
                 {
-                    Stream response = await result.Content.ReadAsStreamAsync();
-                    rpcResponse = (XMLRpcResponse)serializer.Deserialize(response);
+                    string data = await result.Content.ReadAsStringAsync();
+                    using (Stream response = await result.Content.ReadAsStreamAsync())
+                    {
+                        try
+                        {
+                            rpcResponse = XMLRpcSerializer.Deserialize<T>(response);
+                        }
+                        catch (InvalidCastException ex)
+                        {
+                            if (ex.Message.Contains("System.Boolean"))
+                            {
+                                throw new XMLRpcInvalidCredentiasException("the username and password combination does not match the stored data", ex);
+                            }
+                            else
+                            {
+                                throw ex;
+                            }
+                        }
+                    }
                 }
             }
-            return rpcResponse;
+            return (T)rpcResponse;
         }
 
-        public async Task<XMLRpcResponse> Send(string methodName, string modelName, XMLRpcParameter<XMLRpcParamList<IXMLRpcParameter>> parameters)
+        public async Task<T> Send<T>(string methodName, string modelName, XMLRpcParameter<XMLRpcParamList<IXMLRpcParameter>> parameters)
         {
-            var loginRequest = await this.Login();
+            var loginRequestResult = await this.Login<int>();
 
-            XmlSerializer serializer = new XmlSerializer(typeof(XMLRpcResponse));
-            var rpcResponse = new XMLRpcResponse();
+            var rpcResponse = new object();
             XMLRpcRequest rpcRequest = new XMLRpcRequest
             {
                 Url = $"{UrlBase}/xmlrpc/2/object",
@@ -96,11 +112,11 @@ namespace Core.XMLRpc
                         FilterOption = FilterOption.None,
                         Value=Database
                     },
-                    new XMLRpcParameter<string>
+                    new XMLRpcParameter<int>
                     {
                         Name="userId",
                         FilterOption = FilterOption.None,
-                        Value=loginRequest.Response[0].Value+""
+                        Value=loginRequestResult
                     },
                     new XMLRpcParameter<string>
                     {
@@ -150,11 +166,15 @@ namespace Core.XMLRpc
                 HttpResponseMessage result = await client.SendAsync(request);
                 if (result.IsSuccessStatusCode)
                 {
-                    Stream response = await result.Content.ReadAsStreamAsync();
-                    rpcResponse = (XMLRpcResponse)serializer.Deserialize(response);
+                    string data = await result.Content.ReadAsStringAsync();
+
+                    using (Stream response = await result.Content.ReadAsStreamAsync())
+                    {
+                        rpcResponse = XMLRpcSerializer.Deserialize<T>(response);
+                    }
                 }
             }
-            return rpcResponse;
+            return (T)rpcResponse;
         }
 
 
