@@ -1,4 +1,6 @@
-﻿using Core.XMLRpc.Exceptions;
+﻿using Core.XMLRpc.Commons;
+using Core.XMLRpc.Odoo.Exceptions;
+using Core.XMLRpc.Request;
 using Core.XMLRpc.Serializer;
 using System;
 using System.Collections.Generic;
@@ -93,8 +95,7 @@ namespace Core.XMLRpc.Odoo
             return data;
 
         }
-
-
+        
         private async Task<List<IXMLRpcParameter>> PrepareCall(string modelName, string methodName, XMLRpcParamList<IXMLRpcParameter> filters)
         {
             var requestedId = await Login();
@@ -147,87 +148,5 @@ namespace Core.XMLRpc.Odoo
 
             return parameters;
         }
-
-        //public async Task<T> Send<T>(string methodName, string modelName, XMLRpcParameter<XMLRpcParamList<IXMLRpcParameter>> parameters)
-        //{
-        //    var rpcResponse = new object();
-
-        //    XMLRpcRequest rpcRequest = new XMLRpcRequest
-        //    {
-        //        Url = $"{UrlBase}/xmlrpc/2/object",
-        //        MethodName = "execute",
-        //        Encoding = Encoding.UTF8,
-        //        Parameters = new List<IXMLRpcParameter>{
-        //            new XMLRpcParameter<string>
-        //            {
-        //                Name="db",
-        //                FilterOption = FilterOption.None,
-        //                Value=Database
-        //            },
-        //            new XMLRpcParameter<int>
-        //            {
-        //                Name="userId",
-        //                FilterOption = FilterOption.None,
-        //                Value=loginRequestResult
-        //            },
-        //            new XMLRpcParameter<string>
-        //            {
-        //                Name="password",
-        //                FilterOption = FilterOption.None,
-        //                Value=Password
-        //            },
-        //            new XMLRpcParameter<string>
-        //            {
-        //                Name="modelName",
-        //                FilterOption = FilterOption.None,
-        //                Value=modelName
-        //            },
-        //            new XMLRpcParameter<string>
-        //            {
-        //                Name="methodName",
-        //                FilterOption = FilterOption.None,
-        //                Value=methodName
-        //            }
-        //        }
-        //    };
-
-        //    if ((parameters?.Value?.Count ?? 0) > 0)
-        //    {
-        //        var filter = new XMLRpcParameter<XMLRpcParamList<IXMLRpcParameter>>
-        //        {
-        //            Value = new XMLRpcParamList<IXMLRpcParameter>()
-        //        };
-        //        foreach (var item in parameters.Value)
-        //        {
-        //            filter.Value.Add(item);
-        //        }
-        //        rpcRequest.Parameters.Add(filter);
-        //    }
-
-        //    using (var client = new HttpClient())
-        //    {
-        //        string bodyContent = XMLRpcSerializer.SerializeObject(rpcRequest);
-
-        //        HttpRequestMessage request = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Post,
-        //            RequestUri = new Uri(rpcRequest.Url),
-        //            Content = new StringContent(bodyContent, Encoding.UTF8, "application/xml")
-        //        };
-
-        //        HttpResponseMessage result = await client.SendAsync(request);
-        //        if (result.IsSuccessStatusCode)
-        //        {
-        //            string data = await result.Content.ReadAsStringAsync();
-
-        //            using (Stream response = await result.Content.ReadAsStreamAsync())
-        //            {
-        //                rpcResponse = XMLRpcSerializer.Deserialize<T>(response);
-        //            }
-        //        }
-        //    }
-        //    return (T)rpcResponse;
-        //}
-
     }
 }

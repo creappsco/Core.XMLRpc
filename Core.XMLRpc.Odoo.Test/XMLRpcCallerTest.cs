@@ -1,4 +1,4 @@
-﻿using Core.XMLRpc.Exceptions;
+﻿using Core.XMLRpc.Odoo.Exceptions;
 using Core.XMLRpc.Odoo;
 using Core.XMLRpc.Odoo.Test;
 using System;

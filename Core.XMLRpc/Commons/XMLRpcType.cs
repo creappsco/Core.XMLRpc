@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.XMLRpc
+namespace Core.XMLRpc.Commons
 {
     public enum XMLRpcType
     {

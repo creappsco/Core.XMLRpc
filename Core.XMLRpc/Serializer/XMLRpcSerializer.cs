@@ -12,8 +12,16 @@ using System.Xml.Serialization;
 
 namespace Core.XMLRpc.Serializer
 {
+    /// <summary>
+    /// Static class that Allow to Serialize/Deserialize a XML RPC Request/Response
+    /// </summary>
     public static class XMLRpcSerializer
     {
+        /// <summary>
+        /// Serialize a XMLRpcRequest
+        /// </summary>
+        /// <param name="request">XML Rpc Request Object</param>
+        /// <returns></returns>
         public static string SerializeObject(XMLRpcRequest request)
         {
             using (var stream = new MemoryStream())
@@ -42,7 +50,29 @@ namespace Core.XMLRpc.Serializer
                 return bodyContent;
             }
         }
+        /// <summary>
+        /// Deserialize a Stream into specified T Type
+        /// </summary>
+        /// <typeparam name="T">Expected Result of T Class</typeparam>
+        /// <param name="stream">Stream that contains the XML Content</param>
+        /// <returns></returns>
+        public static T Deserialize<T>(Stream stream)
+        {
+            var settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                IgnoreWhitespace = true
+            };
 
+            XmlReader reader = XmlReader.Create(stream, settings);
+            return DeserializeParam<T>(reader);
+        }
+        /// <summary>
+        /// Serialize a XML RPC Paramter
+        /// </summary>
+        /// <param name="xmlWriter">XML Writer that contains XML Stream</param>
+        /// <param name="parameter">Parameter to serialize</param>
         private static void SerializeParameter(XmlWriter xmlWriter, IXMLRpcParameter parameter)
         {
             if (parameter.IsArray)
@@ -108,8 +138,14 @@ namespace Core.XMLRpc.Serializer
                 }
             }
         }
-
-        public static T DeserializeStruct<T>(XmlReader reader, bool containedInArray = false)
+        /// <summary>
+        /// Deserialize a <struct></struct> element
+        /// </summary>
+        /// <typeparam name="T">Expected Type result</typeparam>
+        /// <param name="reader">XML Writer that contains XML Stream</param>
+        /// <param name="containedInArray">Indicates if a parameter is in Array</param>
+        /// <returns>T element</returns>
+        private static T DeserializeStruct<T>(XmlReader reader, bool containedInArray = false)
         {
             Dictionary<object, object> structInfo = new Dictionary<object, object>();
             Dictionary<object, XMLRpcType> structDataTypeInfo = new Dictionary<object, XMLRpcType>();
@@ -199,8 +235,13 @@ namespace Core.XMLRpc.Serializer
             //}
             //return (T)newObject;
         }
-
-        public static T DeserializeArray<T>(XmlReader reader)
+        /// <summary>
+        /// Deserialize a <array></array> element
+        /// </summary>
+        /// <typeparam name="T">Expected Type result</typeparam>
+        /// <param name="reader">XML Writer that contains XML Stream</param>
+        /// <returns>T element</returns>
+        private static T DeserializeArray<T>(XmlReader reader)
         {
             List<object> data = new List<object>();
 
@@ -235,7 +276,14 @@ namespace Core.XMLRpc.Serializer
 
             return (T)reportDS;
         }
-
+        /// <summary>
+        /// Deserialize a array item
+        /// </summary>
+        /// <typeparam name="T">Expected Type result</typeparam>
+        /// <param name="reader">XML Writer that contains XML Stream</param>
+        /// <param name="arrayItemType">Type of Array Object</param>
+        /// <param name="containedInArray">Indicates if a parameter is in Array</param>
+        /// <returns>T element</returns>
         public static T DeserializeArrayItem<T>(XmlReader reader, Type arrayItemType, bool containedInArray = false)
         {
             var dataValue = new object();
@@ -282,7 +330,13 @@ namespace Core.XMLRpc.Serializer
             }
             return (T)dataValue;
         }
-
+        /// <summary>
+        /// Deserialize a struct member
+        /// </summary>
+        /// <param name="reader">XML Reader that contains XML Stream</param>
+        /// <param name="arrayItemType">Type of Array Object</param>
+        /// <param name="containedInArray">Indicates if a parameter is in Array</param>
+        /// <returns>Object element</returns>
         private static object DeserializeParamStruct(XmlReader reader, Type arrayItemType, bool containedInArray)
         {
             Dictionary<object, object> structInfo = new Dictionary<object, object>();
@@ -323,9 +377,9 @@ namespace Core.XMLRpc.Serializer
                                         readedValue = dataTypeNode.Value;
                                         break;
                                     case XMLRpcType.Array:
-                                        
+
                                     case XMLRpcType.Struct:
-                                         
+
                                     default:
                                         break;
                                 }
@@ -353,21 +407,14 @@ namespace Core.XMLRpc.Serializer
             }
             return newObject;
         }
-
-        public static T Deserialize<T>(Stream stream)
-        {
-            var settings = new XmlReaderSettings
-            {
-                IgnoreComments = true,
-                IgnoreProcessingInstructions = true,
-                IgnoreWhitespace = true
-            };
-
-            XmlReader reader = XmlReader.Create(stream, settings);
-            return DeserializeParam<T>(reader);
-        }
-
-        public static T DeserializeParam<T>(XmlReader reader, bool containedInArray = false)
+        /// <summary>
+        /// Deserialize a <param></param> element
+        /// </summary>
+        /// <typeparam name="T">Expected element</typeparam>
+        /// <param name="reader">XML Reader that contains XML Stream</param>
+        /// <param name="containedInArray">Indicates if a parameter is in Array</param>
+        /// <returns></returns>
+        private static T DeserializeParam<T>(XmlReader reader, bool containedInArray = false)
         {
             var dataValue = new object();
 
@@ -414,7 +461,12 @@ namespace Core.XMLRpc.Serializer
             }
             return (T)dataValue;
         }
-
+        /// <summary>
+        /// Convert a object to T
+        /// </summary>
+        /// <typeparam name="T">Expected Type</typeparam>
+        /// <param name="value">Value</param>
+        /// <returns>T object</returns>
         private static object ConvertToType<T>(object value)
         {
             Type clrType = typeof(T);
@@ -445,7 +497,12 @@ namespace Core.XMLRpc.Serializer
                     return null;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clrType"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private static object ConvertToType(Type clrType, object value)
         {
             switch (clrType.Name)
@@ -482,11 +539,14 @@ namespace Core.XMLRpc.Serializer
                     return null;
             }
         }
-
+        /// <summary>
+        /// Convert a string value with '_' characters to Camel Case Notation
+        /// </summary>
+        /// <param name="value">Original string</param>
+        /// <returns>Converted String</returns>
         private static string NormalizePropertyName(string value)
         {
             return value.Replace("_", " ").ToCamelCase();
         }
-
     }
 }

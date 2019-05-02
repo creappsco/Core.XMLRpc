@@ -4,8 +4,16 @@ using System.Text;
 
 namespace Core.XMLRpc.Commons
 {
+    /// <summary>
+    /// class that contains extension methods for working with strings
+    /// </summary>
     public static class StringExtension
     {
+        /// <summary>
+        /// Convert a String to CamelCase notation
+        /// </summary>
+        /// <param name="theString">String to convert</param>
+        /// <returns></returns>
         public static string ToCamelCase(this string theString)
         {
             if (theString == null || theString.Length < 2)
