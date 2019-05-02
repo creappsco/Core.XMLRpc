@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.XMLRpc.App", "Core.XML
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.XMLRpc.Test", "Core.XMLRpc.Test\Core.XMLRpc.Test.csproj", "{1C406EA8-E8DA-482B-A429-03B820806996}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.XMLRpc", "Core.XMLRpc\Core.XMLRpc.csproj", "{2CC794EA-6468-4346-B11A-2CE205110F44}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.XMLRpc", "Core.XMLRpc\Core.XMLRpc.csproj", "{2CC794EA-6468-4346-B11A-2CE205110F44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
