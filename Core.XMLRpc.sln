@@ -7,7 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.XMLRpc.App", "Core.XML
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.XMLRpc.Test", "Core.XMLRpc.Test\Core.XMLRpc.Test.csproj", "{1C406EA8-E8DA-482B-A429-03B820806996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.XMLRpc", "Core.XMLRpc\Core.XMLRpc.csproj", "{2CC794EA-6468-4346-B11A-2CE205110F44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.XMLRpc", "Core.XMLRpc\Core.XMLRpc.csproj", "{2CC794EA-6468-4346-B11A-2CE205110F44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.XMLRpc.Odoo", "Core.XMLRpc.Odoo\Core.XMLRpc.Odoo.csproj", "{6BB9690D-E942-4EB1-AABC-C46EBDE337C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.XMLRpc.Odoo.Test", "Core.XMLRpc.Odoo.Test\Core.XMLRpc.Odoo.Test.csproj", "{537FBFD2-947C-4A44-B8C8-CD191F603FB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{2CC794EA-6468-4346-B11A-2CE205110F44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CC794EA-6468-4346-B11A-2CE205110F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CC794EA-6468-4346-B11A-2CE205110F44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BB9690D-E942-4EB1-AABC-C46EBDE337C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BB9690D-E942-4EB1-AABC-C46EBDE337C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BB9690D-E942-4EB1-AABC-C46EBDE337C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BB9690D-E942-4EB1-AABC-C46EBDE337C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{537FBFD2-947C-4A44-B8C8-CD191F603FB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{537FBFD2-947C-4A44-B8C8-CD191F603FB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{537FBFD2-947C-4A44-B8C8-CD191F603FB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{537FBFD2-947C-4A44-B8C8-CD191F603FB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -323,9 +323,9 @@ namespace Core.XMLRpc.Serializer
                                         readedValue = dataTypeNode.Value;
                                         break;
                                     case XMLRpcType.Array:
-                                        throw new NotImplementedException("");
+                                        
                                     case XMLRpcType.Struct:
-                                        throw new NotImplementedException("");
+                                         
                                     default:
                                         break;
                                 }
