@@ -1,4 +1,5 @@
 ﻿using Core.XMLRpc.Commons;
+using Core.XMLRpc.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -211,29 +212,10 @@ namespace Core.XMLRpc.Serializer
             {
                 if (structInfo.ContainsKey(property.Name))
                 {
-                    property.SetValue(newObject, ConvertToType(property.PropertyType, structInfo[property.Name]));
+                    property.SetValue(newObject, ConvertToType(property.PropertyType, structInfo[property.Name], property.Name));
                 }
             }
             return (T)newObject;
-
-
-            ////Reflection on Internal Element
-            //Type tModelType = typeof(T).GenericTypeArguments[0];
-            //PropertyInfo[] arrayPropertyInfos = tModelType.GetProperties();
-
-            //var IListRef = typeof(T);
-            //Type[] IListParam = { tModelType };
-
-            //object List = Activator.CreateInstance(IListRef.MakeGenericType(IListParam));
-
-            //foreach (PropertyInfo property in arrayPropertyInfos)
-            //{
-            //    if (structInfo.ContainsKey(property.Name))
-            //    {
-            //        property.SetValue(newObject, ConvertToType(property.PropertyType, structInfo[property.Name]));
-            //    }
-            //}
-            //return (T)newObject;
         }
         /// <summary>
         /// Deserialize a <array></array> element
@@ -402,7 +384,7 @@ namespace Core.XMLRpc.Serializer
             {
                 if (structInfo.ContainsKey(property.Name))
                 {
-                    property.SetValue(newObject, ConvertToType(property.PropertyType, structInfo[property.Name]));
+                    property.SetValue(newObject, ConvertToType(property.PropertyType, structInfo[property.Name], property.Name));
                 }
             }
             return newObject;
@@ -457,6 +439,20 @@ namespace Core.XMLRpc.Serializer
                             }
                         }
                     }
+                    else
+                    {
+                        if (reader.Name == "fault")
+                        {
+                            if (XNode.ReadFrom(reader) is XElement el)
+                            {
+                                var content = el.FirstNode as XElement;
+
+                                var faultObj = DeserializeStruct<XMLRPCException>(content.CreateReader(), true);
+
+                                throw new XMLRPCException(faultObj.FaultCode, faultObj.FaultString);
+                            }
+                        }
+                    }
                 }
             }
             return (T)dataValue;
@@ -503,40 +499,47 @@ namespace Core.XMLRpc.Serializer
         /// <param name="clrType"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static object ConvertToType(Type clrType, object value)
+        private static object ConvertToType(Type clrType, object value, string propertyName)
         {
-            switch (clrType.Name)
+            try
             {
-                case "Int32":
-                    return Int32.Parse(value.ToString());
-                case "Boolean":
-                    if (value.Equals("1"))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        if (value.Equals("0"))
+                switch (clrType.Name)
+                {
+                    case "Int32":
+                        return Int32.Parse(value.ToString());
+                    case "Boolean":
+                        if (value.Equals("1"))
                         {
-                            return false;
+                            return true;
                         }
-                    }
-                    return Boolean.Parse(value.ToString());
-                case "Double":
-                    return Double.Parse(value.ToString());
-                case "DateTime":
-                    if (DateTime.TryParse(value.ToString(), out DateTime dateTime))
-                    {
-                        return dateTime;
-                    }
-                    else
-                    {
-                        return new DateTime();
-                    }
-                case "String":
-                    return value.ToString();
-                default:
-                    return null;
+                        else
+                        {
+                            if (value.Equals("0"))
+                            {
+                                return false;
+                            }
+                        }
+                        return Boolean.Parse(value.ToString());
+                    case "Double":
+                        return Double.Parse(value.ToString().Replace('.', ','));
+                    case "DateTime":
+                        if (DateTime.TryParse(value.ToString(), out DateTime dateTime))
+                        {
+                            return dateTime;
+                        }
+                        else
+                        {
+                            return new DateTime();
+                        }
+                    case "String":
+                        return value.ToString();
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"the {propertyName} value:{value} can not converted to {clrType.Name}");
             }
         }
         /// <summary>

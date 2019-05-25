@@ -10,6 +10,8 @@ namespace Core.XMLRpc.Commons
         [StringValue("")]
         None,
         [StringValue("=")]
-        Equals
+        Equals,
+        [StringValue(">=")]
+        GreaterOrEquals,
     }
 }

@@ -57,5 +57,19 @@ namespace Core.XMLRpc.Test
             //Assert
             Assert.True(returned.Count > 0);
         }
+
+        [Fact]
+        public async void Can_Call_SearchRead_Limit()
+        {
+            //Arrange         
+            var filters = new XMLRpcParamList<IXMLRpcParameter>();
+            var filters = new XMLRpcParamList<IXMLRpcParameter>();
+            XMLRpcOdooClient caller = new XMLRpcOdooClient("https://corexmlrpcdemo.odoo.com", "demoodoo@demoodoo.co", "odoo2019", "corexmlrpcdemo");
+            //Act
+            var returned = await caller.SearchAndRead<List<Contacto>>("res.partner", filters);
+            Assert.IsType<List<Contacto>>(returned);
+            //Assert
+            Assert.True(returned.Count > 0);
+        }
     }
 }
